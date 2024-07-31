@@ -1,14 +1,4 @@
-/**
- * Import function triggers from their respective submodules:
- *
- * const {onCall} = require("firebase-functions/v2/https");
- * const {onDocumentWritten} = require("firebase-functions/v2/firestore");
- *
- * See a full list of supported triggers at https://firebase.google.com/docs/functions
- */
 
-const {onRequest} = require("firebase-functions/v2/https");
-const logger = require("firebase-functions/logger");
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const uri = "mongodb+srv://baobaote00:M1kHL93T70udniIl@tu-vung.jeysuu1.mongodb.net/?retryWrites=true&w=majority&appName=tu-vung";
 
@@ -33,9 +23,5 @@ async function run() {
     await client.close();
   }
 }
-run().catch(console.dir);
 
-exports.helloWorld = onRequest((request, response) => {
-  logger.info("Hello logs!", {structuredData: true});
-  response.send("Hello from Firebase!");
-});
+run().catch(console.dir);
