@@ -6,7 +6,13 @@
   "author": "nlttien <baobaote000@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "mongodb": "^6.8.0"
+    "axios": "^1.7.2",
+    "cheerio": "^1.0.0-rc.12",
+    "kuromoji": "^0.1.2",
+    "kuroshiro": "^1.2.0",
+    "kuroshiro-analyzer-kuromoji": "^1.1.0",
+    "mongodb": "^6.8.0",
+    "wanakana": "^5.3.1"
   },
   "scripts": {
     "start": "node index.js"
