@@ -16,9 +16,11 @@ const { connectDB, closeConnection } = require('./database');
 const User = require('./models/User');
 const authMiddleware = require('./authMiddleware');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 
 const app = express();
 app.use(bodyParser.json());
+app.use(cookieParser());
 
 const SECRET_KEY = 'your_secret_key';
 const REFRESH_SECRET_KEY = 'your_refresh_secret_key';
@@ -26,6 +28,7 @@ app.use(cors({
   origin: 'http://localhost:3000', // Thay đổi URL này nếu ứng dụng frontend của bạn đang chạy ở địa chỉ khác
   methods: ['GET', 'POST', 'PUT', 'DELETE'], // Các phương thức HTTP được phép
   allowedHeaders: ['Content-Type', 'Authorization'], // Các header được phép
+  credentials: true, // Allow cookies to be sent and received
 }));
 /**
  * Khởi tạo máy chủ và các endpoint
@@ -145,6 +148,10 @@ const startServer = async () => {
       // Xử lý lỗi nếu có sự cố khi xóa token
       res.status(500).json({ message: 'Error logging out', error });
     }
+  });
+
+  app.get('/verify-token', authMiddleware, (req, res) => {
+    res.json({ message: 'Token is valid' });
   });
 
   /**
