@@ -87,11 +87,14 @@ async function run() {
 //     console.error(`Error: ${error}`);
 //   });
 
-const url2 = 'http://127.0.0.1:3001/login';
+const url2 = 'http://127.0.0.1:3001/register';
 const urlgetdata = 'http://127.0.0.1:3001/protected';
 
+const username = "tien"
+const password = "nguyenle"
+const role = "user"
 
-axios.get(urlgetdata)
+axios.post(url2, { username, password, role })
   .then(response => {
     console.log(response.data);
   })
