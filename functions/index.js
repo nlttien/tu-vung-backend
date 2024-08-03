@@ -134,9 +134,6 @@ const startServer = async () => {
     if (!refreshToken) return res.sendStatus(401);
 
     try {
-      // Xóa refresh token khỏi cơ sở dữ liệu
-      await RefreshToken.deleteOne({ token: refreshToken });
-
       // Xóa cookie chứa access token
       res.clearCookie('accessToken');
       // Xóa cookie chứa refresh token
