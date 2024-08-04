@@ -79,14 +79,14 @@ const startServer = async () => {
       }
 
       // Tạo access token và refresh token
-      const accessToken = jwt.sign({ email: user.email }, SECRET_KEY, { expiresIn: '2d' });
-      const refreshToken = jwt.sign({ email: user.email }, REFRESH_SECRET_KEY, { expiresIn: '7d' });
+      const accessToken = jwt.sign({ email: user.email, role: user.role }, SECRET_KEY, { expiresIn: '2d' });
+      const refreshToken = jwt.sign({ email: user.email, role: user.role }, REFRESH_SECRET_KEY, { expiresIn: '7d' });
 
       // Gửi token về phía client qua cookie
       res.cookie('accessToken', accessToken, { httpOnly: true, secure: true });
       res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true });
 
-      res.json({ message: 'Logged in successfully' });
+      res.json({ message: 'Logged in successfully', role: user.role });
     } catch (error) {
       res.status(500).send({ message: 'Error logging in', error });
     }
@@ -148,7 +148,9 @@ const startServer = async () => {
   });
 
   app.get('/verify-token', authMiddleware, (req, res) => {
-    res.json({ message: 'Token is valid' });
+    const { role } = req.user;
+
+    res.json({ message: 'Token is valid', role });
   });
 
   /**
