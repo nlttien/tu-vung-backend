@@ -3,11 +3,12 @@ const router = express.Router();
 const Vocabulary = require('../models/vocabulary');
 const { default: axios } = require('axios');
 
-const url = 'https://convert-tu-vung-a4dyqf7unq-uc.a.run.app/convert_tu_vung';
+const url2 = 'https://convert-tu-vung-a4dyqf7unq-uc.a.run.app';
 const vocabularies = [
   {
     _id: '1',
     type: 'Noun',
+    japaneseWord: 'ありがとう',
     japaneseWord: 'ありがとう',
     meaning: 'Cảm ơn',
     reading: 'Arigatou',
@@ -21,20 +22,20 @@ const vocabularies = [
 // Create - Thêm mới từ vựng
 router.post('/', async (req, res) => {
   try {
-    const { type, japaneseWord, meaning, notes } = req.body;
-    const response = await axios.post(url2, { "query": "勉強し" })
+    const { type, japaneseWord,vietnameseMeaning, meaning, note } = req.body;
+    const response = await axios.post(url2, { "query": japaneseWord })
       .catch(error => {
         console.error(`Error: ${error}`);
       });
 
-    const reading = response.data
+    const reading = response.data.joined_hira
     const activity = "active"
-    const hanReading = 
+    const hanzi = response.data.converted_data
 
-    // const newVocabulary = new Vocabulary(req.body);
-    res.json(req.body)
-    // const savedVocabulary = await newVocabulary.save();
-    // res.status(201).json(savedVocabulary);
+    const newVocabulary = new Vocabulary({ type, japaneseWord,vietnameseMeaning, meaning, reading, activity, hanzi, note });
+    // res.json({ type, japaneseWord, meaning, reading, activity, hanReading, notes })
+    const savedVocabulary = await newVocabulary.save();
+    res.status(201).json(savedVocabulary);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
