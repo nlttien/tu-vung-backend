@@ -5,6 +5,7 @@ const cors = require('cors');
 const { connectDB, closeConnection } = require('./database');
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/user');
+const usersRoutes = require('./routes/userRoutes');
 const vocabulariesRoutes = require('./routes/vocabularies');
 
 const app = express();
@@ -24,6 +25,7 @@ const startServer = async () => {
   app.use('/api/auth', authRoutes);
   app.use('/api/user', userRoutes);
   app.use('/api/vocabularies', vocabulariesRoutes);
+  app.use('/api/users', usersRoutes);
 
   app.listen(3001, () => {
     console.log('Server is running on port 3001');
