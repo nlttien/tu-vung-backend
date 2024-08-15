@@ -1,19 +1,28 @@
 {
-  "name": "functions",
-  "description": "Cloud Functions for Firebase",
+  "main": "index.js",
   "scripts": {
+    "start": "npm run shell",
+    "build": "tsc",
+    "build:watch": "tsc --watch",
     "serve": "firebase emulators:start --only functions",
     "shell": "firebase functions:shell",
-    "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log",
     "docs": "jsdoc -d docs ./"
   },
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
   "engines": {
     "node": "20"
   },
-  "main": "index.js",
   "dependencies": {
+    "@genkit-ai/ai": "^0.5.9",
+    "@genkit-ai/core": "^0.5.9",
+    "@genkit-ai/dotprompt": "^0.5.9",
+    "@genkit-ai/firebase": "^0.5.9",
+    "@genkit-ai/flow": "^0.5.9",
+    "@genkit-ai/googleai": "^0.5.9",
+    "@types/jsonwebtoken": "^9.0.6",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
@@ -23,7 +32,8 @@
     "firebase-functions": "^5.0.0",
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.8.0",
-    "mongoose": "^8.5.2"
+    "mongoose": "^8.5.2",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "firebase-functions-test": "^3.1.0",

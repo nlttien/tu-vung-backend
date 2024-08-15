@@ -38,8 +38,16 @@ router.post('/login', async (req, res) => {
     const accessToken = jwt.sign({ username: user.username, role: user.role }, SECRET_KEY, { expiresIn: '2d' });
     const refreshToken = jwt.sign({ username: user.username, role: user.role }, REFRESH_SECRET_KEY, { expiresIn: '7d' });
 
-    res.cookie('accessToken', accessToken, { httpOnly: true, secure: true });
-    res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true });
+    res.cookie('accessToken', accessToken, {
+      httpOnly: true,
+      secure: true, // Chỉ gửi cookie qua HTTPS
+      sameSite: 'None', // SameSite=None
+    });
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: true, // Chỉ gửi cookie qua HTTPS
+      sameSite: 'None', // SameSite=None
+    });
 
     res.json({ message: 'Logged in successfully', role: user.role });
   } catch (error) {
@@ -58,7 +66,11 @@ router.post('/refresh-token', async (req, res) => {
     if (err) return res.sendStatus(403);
 
     const accessToken = jwt.sign({ username: user.username, role: user.role }, SECRET_KEY, { expiresIn: '2d' });
-    res.cookie('accessToken', accessToken, { httpOnly: true, secure: true });
+    res.cookie('accessToken', accessToken, {
+      httpOnly: true,
+      secure: true, // Chỉ gửi cookie qua HTTPS
+      sameSite: 'None', // SameSite=None
+    });
     res.json({ message: 'Token refreshed' });
   });
 });
@@ -80,8 +92,11 @@ router.post('/logout', async (req, res) => {
 });
 
 router.get('/verify-token', authMiddleware, (req, res) => {
-  const { role } = req.user;
+  if (!req.user) {
+    return res.status(401).json({ message: 'Token has expired or is invalid' });
+  }
 
+  const { role } = req.user;
   res.json({ message: 'Token is valid', role });
 });
 

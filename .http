@@ -25,11 +25,11 @@ POST https://convert-tu-vung-a4dyqf7unq-uc.a.run.app
 Content-Type: application/json
 
 {
-  "query": "勉強し"
+  "query": "三体"
 }
 
 ### API 2 - Tạo yêu cầu đến API cục bộ
-POST http://127.0.0.1:3001/api/vocabularies
+POST http://127.0.0.1:5001/tu-vung-447ad/us-central1/beServerFunction/api/vocabularies
 Content-Type: application/json
 
 {
@@ -41,7 +41,7 @@ Content-Type: application/json
 }
 
 ### API 2 - Tạo yêu cầu đến API cục bộ
-GET http://127.0.0.1:3001/api/vocabularies/66b31b8cbc05b98d45685581
+GET http://127.0.0.1:5001/tu-vung-447ad/us-central1/beServerFunction/api/vocabularies/66b31b8cbc05b98d45685581
 
 Content-Type: application/json
 
@@ -56,3 +56,12 @@ Content-Type: application/json
 # {
 #   "_id": "66b1e9f10649103ab548f516",
 # }
+
+
+### 
+POST http://127.0.0.1:5001/tu-vung-447ad/us-central1/beServerFunction/api/vocabylary/search
+Content-Type: application/json
+
+{
+  "subject": "エンタメ"
+}

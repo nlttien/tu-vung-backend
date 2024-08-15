@@ -6,30 +6,28 @@ const { connectDB, closeConnection } = require('./database');
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/user');
 const usersRoutes = require('./routes/userRoutes');
+const genkitRoute = require('./routes/genkitVocabulary');
 const vocabulariesRoutes = require('./routes/vocabularies');
+const functions = require('firebase-functions');
 
 const app = express();
 app.use(bodyParser.json());
 app.use(cookieParser());
 
 app.use(cors({
-  origin: 'http://localhost:3000',
+  origin: ['http://localhost:3000', 'http://127.0.0.1:5500', "https://tu-vung-447ad.web.app"],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
 }));
 
-const startServer = async () => {
-  await connectDB();
+connectDB();
 
-  app.use('/api/auth', authRoutes);
-  app.use('/api/user', userRoutes);
-  app.use('/api/vocabularies', vocabulariesRoutes);
-  app.use('/api/users', usersRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/user', userRoutes);
+app.use('/api/vocabularies', vocabulariesRoutes);
+app.use('/api/users', usersRoutes);
+app.use('/api/vocabylary', genkitRoute);
 
-  app.listen(3001, () => {
-    console.log('Server is running on port 3001');
-  });
-};
+exports.beServerFunction = functions.https.onRequest(app);
 
-startServer();

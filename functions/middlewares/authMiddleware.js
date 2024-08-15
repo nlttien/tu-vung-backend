@@ -22,6 +22,10 @@ const authMiddleware = (req, res, next) => {
   // Xác minh token với SECRET_KEY
   jwt.verify(token, SECRET_KEY, (err, decoded) => {
     if (err) {
+      if (err.name === 'TokenExpiredError') {
+        // Nếu token hết hạn, trả về lỗi 401 và thông báo
+        return res.status(401).json({ message: 'Token has expired. Please log in again.' });
+      }
       // Nếu token không hợp lệ, trả về lỗi 403 (Forbidden)
       return res.status(403).json({ message: 'Invalid token' });
     }
