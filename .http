@@ -25,7 +25,7 @@ POST https://convert-tu-vung-a4dyqf7unq-uc.a.run.app
 Content-Type: application/json
 
 {
-  "query": "三体"
+  "query": "時代"
 }
 
 ### API 2 - Tạo yêu cầu đến API cục bộ
@@ -33,11 +33,35 @@ POST http://127.0.0.1:5001/tu-vung-447ad/us-central1/beServerFunction/api/vocabu
 Content-Type: application/json
 
 {
-  "_id": "1",
-  "type": "Noun",
-  "japaneseWord": "勉強し",
-  "vietnameseMeaning": "test",
-  "notes": "Used to thank someone"
+  "japaneseWord": "時代",
+  "category": "Lịch sử",
+  "color": "#A9A9A9",
+  "popularity": "95",
+  "vietnameseMeaning": "Khoảng thời gian lịch sử, một giai đoạn nhất định",
+  "related_words": [
+    "歴史",
+    "年号",
+    "文化",
+    "社会"
+  ],
+  "antonyms": [],
+  "vocabularyForms": {
+    "dictionary": "時代",
+    "past": "時代だった",
+    "negative": "時代でない",
+    "polite": "時代です",
+    "te": "時代で",
+    "potential": "時代になる",
+    "passive": "時代になる",
+    "causative": "時代にする",
+    "causative_passive": "時代にされる",
+    "conditional": "時代ならば",
+    "imperative": "時代になれ",
+    "volitional": "時代になりたい",
+    "prohibitive": "時代になるな"
+  },
+  "joined_hira": "じだい",
+  "converted_data": "「ĐẠI THÌ」"
 }
 
 ### API 2 - Tạo yêu cầu đến API cục bộ
@@ -63,5 +87,5 @@ POST http://127.0.0.1:5001/tu-vung-447ad/us-central1/beServerFunction/api/vocaby
 Content-Type: application/json
 
 {
-  "subject": "エンタメ"
+  "subject": "時代"
 }

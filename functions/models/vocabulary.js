@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const vocabularySchema = new mongoose.Schema({
-  type: {
+  category: {
     type: String, // Loại từ (ví dụ: danh từ, động từ, tính từ)
     required: true
   },
@@ -13,21 +13,56 @@ const vocabularySchema = new mongoose.Schema({
     type: String, // Nghĩa tiếng Việt
     required: true
   },
-  reading: {
+  joined_hira: {
     type: String, // Cách đọc
     required: true
   },
-  activity: {
-    type: String, // Hoạt động liên quan
-    required: false // Không bắt buộc
+  category: {
+    type: String, // Phân loại
+    required: true
   },
-  hanzi: {
-    type: String, // Âm Hán (nếu có)
-    required: false // Không bắt buộc
+  color: {
+    type: String, // Mã màu liên quan đến phân loại
+    required: true
   },
-  note: {
-    type: String, // Ghi chú
-    required: false // Không bắt buộc
+  popularity: {
+    type: Number, // Độ thông dụng (%)
+    required: true
+  },
+  vietnameseMeaning: {
+    type: String, // Giải thích ý nghĩa của từ
+    required: true
+  },
+  related_words: {
+    type: [String], // Mảng các từ liên quan
+    required: false
+  },
+  antonyms: {
+    type: [String], // Mảng các từ trái nghĩa
+    required: false
+  },
+  vocabularyForms: {
+    dictionary: { type: String, required: true },
+    past: { type: String, required: true },
+    negative: { type: String, required: true },
+    polite: { type: String, required: true },
+    te: { type: String, required: true },
+    potential: { type: String, required: true },
+    passive: { type: String, required: true },
+    causative: { type: String, required: true },
+    causative_passive: { type: String, required: true },
+    conditional: { type: String, required: true },
+    imperative: { type: String, required: true },
+    volitional: { type: String, required: true },
+    prohibitive: { type: String, required: true }
+  },
+  joined_hira: {
+    type: String, // Phiên âm Hiragana của từ
+    required: true
+  },
+  converted_data: {
+    type: String, // Dữ liệu chuyển đổi
+    required: true
   }
 }, {
   timestamps: true // Tự động thêm các trường createdAt và updatedAt

@@ -1,38 +1,15 @@
 const express = require('express');
 const router = express.Router();
 const Vocabulary = require('../models/vocabulary');
-const { default: axios } = require('axios');
-
-const url2 = 'https://convert-tu-vung-a4dyqf7unq-uc.a.run.app';
-const vocabularies = [
-  {
-    _id: '1',
-    type: 'Noun',
-    japaneseWord: 'ありがとう',
-    japaneseWord: 'ありがとう',
-    meaning: 'Cảm ơn',
-    reading: 'Arigatou',
-    activity: 'Greeting',
-    hanReading: '',
-    notes: 'Used to thank someone'
-  },
-  // Thêm nhiều từ vựng hơn tại đây
-];
 
 // Create - Thêm mới từ vựng
 router.post('/', async (req, res) => {
   try {
-    const { type, japaneseWord,vietnameseMeaning, meaning, note } = req.body;
-    const response = await axios.post(url2, { "query": japaneseWord })
-      .catch(error => {
-        console.error(`Error: ${error}`);
-      });
+    const vocabulary = req.body;
 
-    const reading = response.data.joined_hira
     const activity = "active"
-    const hanzi = response.data.converted_data
 
-    const newVocabulary = new Vocabulary({ type, japaneseWord,vietnameseMeaning, meaning, reading, activity, hanzi, note });
+    const newVocabulary = new Vocabulary({ ...vocabulary, activity });
     // res.json({ type, japaneseWord, meaning, reading, activity, hanReading, notes })
     const savedVocabulary = await newVocabulary.save();
     res.status(201).json(savedVocabulary);

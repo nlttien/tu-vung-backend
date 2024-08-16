@@ -29,5 +29,4 @@ app.use('/api/vocabularies', vocabulariesRoutes);
 app.use('/api/users', usersRoutes);
 app.use('/api/vocabylary', genkitRoute);
 
-exports.beServerFunction = functions.https.onRequest(app);
-
+exports.tuVungFunction = functions.https.onRequest(app);

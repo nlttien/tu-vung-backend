@@ -32,7 +32,7 @@ const classifyVocabularyByField = async (vocabulary) => {
     "category": "phân loại",
     "color": "màu sắc để liên tưởng tới phân loại trả bằng mã #000000",
     "popularity": "độ thông dụng (%)",
-    "meaning": "giải thích ý nghĩa của từ",
+    "vietnameseMeaning": "giải thích ý nghĩa của từ",
     "related_words": ["từ liên quan 1", "từ liên quan 2", ...],
     "antonyms": ["từ trái nghĩa 1", "từ trái nghĩa 2", ...]
   }
@@ -41,7 +41,7 @@ const classifyVocabularyByField = async (vocabulary) => {
     "category": "Công nghệ",
     "color": "#FF5733",
     "popularity": "85",
-    "meaning": "Nhìn nhận sự việc một cách khách quan, không bị ảnh hưởng bởi cảm xúc cá nhân.",
+    "vietnameseMeaning": "Nhìn nhận sự việc một cách khách quan, không bị ảnh hưởng bởi cảm xúc cá nhân.",
     "related_words": ["客観的", "視点"],
     "antonyms": ["主観"]
   }
