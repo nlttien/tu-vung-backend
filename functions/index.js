@@ -8,16 +8,16 @@ const userRoutes = require('./routes/user');
 const usersRoutes = require('./routes/userRoutes');
 const genkitRoute = require('./routes/genkitVocabulary');
 const vocabulariesRoutes = require('./routes/vocabularies');
-const functions = require('firebase-functions');
+const functions = require("firebase-functions");
 
 const app = express();
 app.use(bodyParser.json());
 app.use(cookieParser());
 
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://127.0.0.1:5500', "https://tu-vung-447ad.web.app"],
+  origin: ['https://tu-vung-447ad.web.app', 'http://127.0.0.1:5500', 'http://127.0.0.1:3000'],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Access-Control-Allow-Headers'],
   credentials: true,
 }));
 

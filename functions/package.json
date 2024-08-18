@@ -23,6 +23,7 @@
     "@genkit-ai/flow": "^0.5.9",
     "@genkit-ai/googleai": "^0.5.9",
     "@types/jsonwebtoken": "^9.0.6",
+    "axios": "^1.7.4",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",

@@ -1,7 +1,7 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const User = require('../models/User');
+const User = require('../models/user');
 const authMiddleware = require('../middlewares/authMiddleware');
 const { SECRET_KEY, REFRESH_SECRET_KEY } = require('../config/config');
 
@@ -79,6 +79,8 @@ router.post('/refresh-token', async (req, res) => {
  * Endpoint đăng xuất người dùng
  */
 router.post('/logout', async (req, res) => {
+  res.set('Access-Control-Allow-Origin', 'http://localhost:3000');
+  res.set('Access-Control-Allow-Credentials', 'true');
   const refreshToken = req.cookies.refreshToken;
   if (!refreshToken) return res.sendStatus(401);
 

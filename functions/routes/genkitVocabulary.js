@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { classifyVocabularyByField } = require('../src/genkit');
 const { generateVocabularyForms } = require('../src/genkit');
-const { default: axios } = require('axios');
+const axios = require('axios');
 
 router.post('/search', async (req, res) => {
   const { subject } = req.body;
