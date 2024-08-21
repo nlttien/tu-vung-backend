@@ -26,15 +26,20 @@ const classifyVocabularyByField = async (vocabulary) => {
     - Đánh giá độ thông dụng của từ vựng "${vocabulary}" và trả về giá trị phần trăm (0-100%).
     - Giải thích ý nghĩa của từ tiếng Nhật "${vocabulary}" khoảng 20 chữ.
     - Liệt kê những từ liên quan và những từ trái nghĩa với từ "${vocabulary}".
+    - Nguồn gốc: Nguồn gốc của từ "${vocabulary}" trong tiếng nhật
 
-  Vui lòng trả về kết quả theo định dạng JSON sau và không giải thích gì thêm:
+  Vui lòng trả về kết quả theo định dạng JSON và không giải thích gì thêm:
+  CHÚ Ý: sử dụng dấu '' thay cho dấu "" trong chuỗi giá trị trả về
+  định dạng json không hiểu được định dạng "Từ "たくさん" được hình thành từ việc kết hợp hai từ "たくさん" và "たくさん", nhằm nhấn mạnh mức độ nhiều."
+  nên hãy đổi thành định dạng "Từ 'たくさん' được hình thành từ việc kết hợp hai từ 'たくさん' và 'たくさん', nhằm nhấn mạnh mức độ nhiều."
   {
     "category": "phân loại",
     "color": "màu sắc để liên tưởng tới phân loại trả bằng mã #000000",
     "popularity": "độ thông dụng (%)",
     "vietnameseMeaning": "giải thích ý nghĩa của từ",
     "related_words": ["từ liên quan 1", "từ liên quan 2", ...],
-    "antonyms": ["từ trái nghĩa 1", "từ trái nghĩa 2", ...]
+    "antonyms": ["từ trái nghĩa 1", "từ trái nghĩa 2", ...],
+    "origin": "Nguồn gốc của từ",
   }
   Ví dụ: 
   {
@@ -43,7 +48,8 @@ const classifyVocabularyByField = async (vocabulary) => {
     "popularity": "85",
     "vietnameseMeaning": "Nhìn nhận sự việc một cách khách quan, không bị ảnh hưởng bởi cảm xúc cá nhân.",
     "related_words": ["客観的", "視点"],
-    "antonyms": ["主観"]
+    "antonyms": ["主観"],
+    "origin": "Giống như nhiều từ vựng trong tiếng Nhật, '客観' có nguồn gốc từ tiếng Hán.",
   }
   `;
 
@@ -64,10 +70,15 @@ const classifyVocabularyByField = async (vocabulary) => {
   cleanedJsonString = cleanedJsonString.includes('```') ? cleanedJsonString.replace('```', '') : cleanedJsonString.trim(); 
   
   // Phân tích chuỗi JSON đã làm sạch thành đối tượng
-  resultText = JSON.parse(cleanedJsonString.replace(/\n/g, ''));
+  try {
+    resultText = JSON.parse(cleanedJsonString.replace(/\n/g, ''));
+  } catch (error) {
+    return cleanedJsonString
+  }
 
   return resultText; // Trả về kết quả cuối cùng
 };
+
 
 /**
  * Tạo các thể khác nhau của từ vựng tiếng Nhật
@@ -142,7 +153,11 @@ const generateVocabularyForms = async (vocabulary) => {
   cleanedJsonString = cleanedJsonString.includes('```') ? cleanedJsonString.replace('```', '') : cleanedJsonString.trim(); 
   
   // Phân tích chuỗi JSON đã làm sạch thành đối tượng
-  resultText = JSON.parse(cleanedJsonString.replace(/\n/g, ''));
+  try {
+    resultText = JSON.parse(cleanedJsonString.replace(/\n/g, ''));
+  } catch (error) {
+    return resultText; 
+  }
 
   return resultText; // Trả về kết quả cuối cùng
 };

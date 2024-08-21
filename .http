@@ -83,11 +83,11 @@ Content-Type: application/json
 
 
 ### 
-POST http://127.0.0.1:5001/tu-vung-447ad/us-central1/beServerFunction/api/vocabylary/search
+POST http://127.0.0.1:5001/tu-vung-447ad/us-central1/tuVungFunction/api/vocabylary/search
 Content-Type: application/json
 
 {
-  "subject": "時代"
+  "subject": "たくさん"
 }
 
 ### 

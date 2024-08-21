@@ -16,14 +16,20 @@ router.post('/search', async (req, res) => {
   const { subject } = req.body; // Lấy giá trị 'subject' từ yêu cầu
   try {
     // Phân loại từ vựng theo lĩnh vực
-    const classify = await classifyVocabularyByField(subject);
-    
-    // Tạo các dạng thức từ vựng
-    const vocabularyForms = await generateVocabularyForms(subject);
-    
-    // Gửi yêu cầu HTTP đến một dịch vụ bên ngoài để chuyển đổi cách đọc của từ vựng
-    const yomikata = await axios.post("https://convert-tu-vung-a4dyqf7unq-uc.a.run.app", { query: subject });
-    
+    const [classify, vocabularyForms, yomikata] = await Promise.all([
+      classifyVocabularyByField(subject),
+      generateVocabularyForms(subject),
+      axios.post("https://convert-tu-vung-a4dyqf7unq-uc.a.run.app", { query: subject }),
+    ]);
+
+    const [yomikataRelatedWords, yomikataAntonyms] = await Promise.all([
+      axios.post("https://convert-multi-tu-vung-a4dyqf7unq-uc.a.run.app", { query: classify.related_words }),
+      axios.post("https://convert-multi-tu-vung-a4dyqf7unq-uc.a.run.app", { query: classify.antonyms })
+    ]);
+
+    classify.related_words = yomikataRelatedWords.data
+    classify.antonyms = yomikataAntonyms.data
+
     // Trả về kết quả tìm kiếm, bao gồm từ vựng tiếng Nhật, phân loại từ, các dạng thức từ vựng, và cách đọc của từ
     res.json({ japaneseWord: subject, ...classify, vocabularyForms, ...yomikata.data });
   } catch (error) {
