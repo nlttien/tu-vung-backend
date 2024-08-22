@@ -24,14 +24,10 @@ const classifyVocabularyByField = async (vocabulary) => {
   Nếu từ vựng là tiếng Nhật, thực hiện các yêu cầu sau:
     - Phân loại từ vựng vào các lĩnh vực trong đời sống như thực phẩm, du lịch, công nghệ, y tế, giáo dục, thể thao, v.v.
     - Đánh giá độ thông dụng của từ vựng "${vocabulary}" và trả về giá trị phần trăm (0-100%).
-    - Giải thích ý nghĩa của từ tiếng Nhật "${vocabulary}" khoảng 20 chữ.
+    - Giải thích ý nghĩa của từ tiếng Nhật "${vocabulary}" khoảng 40-50 chữ.
     - Liệt kê những từ liên quan và những từ trái nghĩa với từ "${vocabulary}".
-    - Nguồn gốc: Nguồn gốc của từ "${vocabulary}" trong tiếng nhật
 
   Vui lòng trả về kết quả theo định dạng JSON và không giải thích gì thêm:
-  CHÚ Ý: sử dụng dấu '' thay cho dấu "" trong chuỗi giá trị trả về
-  định dạng json không hiểu được định dạng "Từ "たくさん" được hình thành từ việc kết hợp hai từ "たくさん" và "たくさん", nhằm nhấn mạnh mức độ nhiều."
-  nên hãy đổi thành định dạng "Từ 'たくさん' được hình thành từ việc kết hợp hai từ 'たくさん' và 'たくさん', nhằm nhấn mạnh mức độ nhiều."
   {
     "category": "phân loại",
     "color": "màu sắc để liên tưởng tới phân loại trả bằng mã #000000",
@@ -39,7 +35,6 @@ const classifyVocabularyByField = async (vocabulary) => {
     "vietnameseMeaning": "giải thích ý nghĩa của từ",
     "related_words": ["từ liên quan 1", "từ liên quan 2", ...],
     "antonyms": ["từ trái nghĩa 1", "từ trái nghĩa 2", ...],
-    "origin": "Nguồn gốc của từ",
   }
   Ví dụ: 
   {
@@ -49,7 +44,6 @@ const classifyVocabularyByField = async (vocabulary) => {
     "vietnameseMeaning": "Nhìn nhận sự việc một cách khách quan, không bị ảnh hưởng bởi cảm xúc cá nhân.",
     "related_words": ["客観的", "視点"],
     "antonyms": ["主観"],
-    "origin": "Giống như nhiều từ vựng trong tiếng Nhật, '客観' có nguồn gốc từ tiếng Hán.",
   }
   `;
 
@@ -58,7 +52,7 @@ const classifyVocabularyByField = async (vocabulary) => {
     model: gemini15Flash, // Sử dụng model gemini15Flash từ Google AI
     prompt: prompt, // Gửi prompt để yêu cầu xử lý từ vựng
     config: {
-      temperature: 0.5, // Giảm nhiệt độ để có kết quả phân loại chính xác hơn
+      temperature: 0.3, // Giảm nhiệt độ để có kết quả phân loại chính xác hơn
     },
   });
 
@@ -67,13 +61,20 @@ const classifyVocabularyByField = async (vocabulary) => {
 
   // Làm sạch chuỗi JSON nếu nó có chứa các ký tự không mong muốn
   let cleanedJsonString = resultText.includes('json') ? resultText.replace('```json', '') : resultText;
-  cleanedJsonString = cleanedJsonString.includes('```') ? cleanedJsonString.replace('```', '') : cleanedJsonString.trim(); 
-  
+  cleanedJsonString = cleanedJsonString.includes('```') ? cleanedJsonString.replace('```', '') : cleanedJsonString.trim();
+
   // Phân tích chuỗi JSON đã làm sạch thành đối tượng
   try {
     resultText = JSON.parse(cleanedJsonString.replace(/\n/g, ''));
   } catch (error) {
-    return cleanedJsonString
+    return `{
+    "category": "Công nghệ",
+    "color": "#FF5733",
+    "popularity": "85",
+    "vietnameseMeaning": "Nhìn nhận sự việc một cách khách quan, không bị ảnh hưởng bởi cảm xúc cá nhân.",
+    "related_words": ["客観的", "視点"],
+    "antonyms": ["主観"],
+  }`
   }
 
   return resultText; // Trả về kết quả cuối cùng
@@ -150,14 +151,40 @@ const generateVocabularyForms = async (vocabulary) => {
   let resultText = llmResponse.text().trim();
 
   let cleanedJsonString = resultText.includes('json') ? resultText.replace('```json', '') : resultText;
-  cleanedJsonString = cleanedJsonString.includes('```') ? cleanedJsonString.replace('```', '') : cleanedJsonString.trim(); 
-  
+  cleanedJsonString = cleanedJsonString.includes('```') ? cleanedJsonString.replace('```', '') : cleanedJsonString.trim();
+
   // Phân tích chuỗi JSON đã làm sạch thành đối tượng
   try {
     resultText = JSON.parse(cleanedJsonString.replace(/\n/g, ''));
   } catch (error) {
-    return resultText; 
+    return resultText;
   }
+
+  return resultText; // Trả về kết quả cuối cùng
+};
+
+const generateOrigin = async (vocabulary) => {
+  const prompt = `
+  Kiểm tra xem từ vựng "${vocabulary}" có phải là tiếng Nhật không. Nếu không phải, trả về "Không phải tiếng Nhật".
+  Nếu từ vựng là tiếng Nhật, thực hiện các yêu cầu sau:
+    - Nguồn gốc: Nguồn gốc của từ "${vocabulary}" trong tiếng nhật
+
+  Vui lòng trả về kết quả và không giải thích gì thêm chỉ cần kết quả không cần chú thích gì cả:
+  ví dụ: Từ '無心' được tạo thành từ hai chữ Hán '無' (mu) nghĩa là 'không' và '心' (shin) nghĩa là 'tâm'. 
+  trả lời bằng Tiếng Việt
+  `;
+
+  // Gọi hàm generate từ Genkit AI với prompt đã tạo
+  const llmResponse = await generate({
+    model: gemini15Flash, // Sử dụng model gemini15Flash từ Google AI
+    prompt: prompt, // Gửi prompt để yêu cầu xử lý từ vựng
+    config: {
+      temperature: 0.3, // Giảm nhiệt độ để có kết quả phân loại chính xác hơn
+    },
+  });
+
+  // Lấy văn bản kết quả từ phản hồi của model
+  let resultText = llmResponse.text()
 
   return resultText; // Trả về kết quả cuối cùng
 };
@@ -165,5 +192,6 @@ const generateVocabularyForms = async (vocabulary) => {
 // Xuất các hàm để sử dụng trong các module khác
 module.exports = {
   classifyVocabularyByField,
-  generateVocabularyForms
+  generateVocabularyForms,
+  generateOrigin,
 };

@@ -87,7 +87,7 @@ POST http://127.0.0.1:5001/tu-vung-447ad/us-central1/tuVungFunction/api/vocabyla
 Content-Type: application/json
 
 {
-  "subject": "たくさん"
+  "subject": "祭日"
 }
 
 ### 

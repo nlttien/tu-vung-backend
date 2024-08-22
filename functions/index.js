@@ -15,8 +15,8 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 
 app.use(cors({
-  // origin: 'https://tu-vung-447ad.web.app',
-  origin: 'http://127.0.0.1:3000',
+  origin: 'https://tu-vung-447ad.web.app',
+  // origin: 'http://127.0.0.1:3000',
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Access-Control-Allow-Headers'],
   credentials: true,

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { classifyVocabularyByField } = require('../src/genkit'); // Import hàm phân loại từ vựng theo lĩnh vực
+const { classifyVocabularyByField, generateOrigin } = require('../src/genkit'); // Import hàm phân loại từ vựng theo lĩnh vực
 const { generateVocabularyForms } = require('../src/genkit'); // Import hàm tạo các dạng thức từ vựng
 const axios = require('axios'); // Import thư viện axios để gửi yêu cầu HTTP
 
@@ -16,9 +16,10 @@ router.post('/search', async (req, res) => {
   const { subject } = req.body; // Lấy giá trị 'subject' từ yêu cầu
   try {
     // Phân loại từ vựng theo lĩnh vực
-    const [classify, vocabularyForms, yomikata] = await Promise.all([
+    const [classify, vocabularyForms,origin, yomikata] = await Promise.all([
       classifyVocabularyByField(subject),
       generateVocabularyForms(subject),
+      generateOrigin(subject),
       axios.post("https://convert-tu-vung-a4dyqf7unq-uc.a.run.app", { query: subject }),
     ]);
 
@@ -31,7 +32,7 @@ router.post('/search', async (req, res) => {
     classify.antonyms = yomikataAntonyms.data
 
     // Trả về kết quả tìm kiếm, bao gồm từ vựng tiếng Nhật, phân loại từ, các dạng thức từ vựng, và cách đọc của từ
-    res.json({ japaneseWord: subject, ...classify, vocabularyForms, ...yomikata.data });
+    res.json({ japaneseWord: subject, ...classify, vocabularyForms, ...yomikata.data,origin });
   } catch (error) {
     // Xử lý lỗi và trả về thông báo lỗi
     res.status(500).json({ error: error.message });
