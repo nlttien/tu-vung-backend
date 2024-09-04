@@ -87,7 +87,15 @@ POST http://127.0.0.1:5001/tu-vung-447ad/us-central1/tuVungFunction/api/vocabyla
 Content-Type: application/json
 
 {
-  "subject": "とにかく"
+  "subject": "詳しく"
+}
+
+### 
+POST https://us-central1-tu-vung-447ad.cloudfunctions.net/tuVungFunction/api/vocabylary/search
+Content-Type: application/json
+
+{
+  "subject": "持久力"
 }
 
 ### 

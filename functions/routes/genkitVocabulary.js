@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
-// const { classifyVocabularyByField, generateOrigin } = require('../src/genkit'); // Import hàm phân loại từ vựng theo lĩnh vực
-// const { generateVocabularyForms } = require('../src/genkit'); // Import hàm tạo các dạng thức từ vựng
+const { classifyVocabularyByField, generateOrigin } = require('../src/genkit.v1'); // Import hàm phân loại từ vựng theo lĩnh vực
+const { generateVocabularyForms } = require('../src/genkit.v1'); // Import hàm tạo các dạng thức từ vựng
 const axios = require('axios'); // Import thư viện axios để gửi yêu cầu HTTP
-const { generateText } = require('../src/genkit');
-const { generateVocabularyForms } = require('../src/genkit');
-const { generateOrigin } = require('../src/genkit');
+// const { generateText } = require('../src/genkit.v2');
+// const { generateVocabularyForms } = require('../src/genkit.v2');
+// const { generateOrigin } = require('../src/genkit.v2');
 
 /**
  * POST /search
@@ -20,7 +20,7 @@ router.post('/search', async (req, res) => {
   try {
     // Phân loại từ vựng theo lĩnh vực
     const [generated, vocabularyForms, origin, yomikata] = await Promise.all([
-      generateText(subject),
+      classifyVocabularyByField(subject),
       generateVocabularyForms(subject),
       generateOrigin(subject),
       axios.post("https://convert-tu-vung-a4dyqf7unq-uc.a.run.app", { query: subject }),
