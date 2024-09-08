@@ -2,110 +2,69 @@ const express = require('express');
 const User = require('../models/user');
 const router = express.Router();
 
+// Helper function to handle errors for async route handlers
+const asyncHandler = (fn) => (req, res, next) => {
+  Promise.resolve(fn(req, res, next)).catch(next);
+};
+
 /**
- * Lấy danh sách người dùng từ cơ sở dữ liệu.
- * @async
+ * Get all users.
  * @route GET /
- * @returns {Array} - Danh sách người dùng dưới dạng JSON.
- * @throws {Error} - Nếu có lỗi xảy ra trong quá trình truy xuất dữ liệu.
  */
-router.get('/', async (req, res) => {
-  try {
-    const users = await User.find();
-    res.json(users);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
+router.get('/', asyncHandler(async (req, res) => {
+  const users = await User.find();
+  res.json(users);
+}));
 
 /**
- * Lấy thông tin một người dùng theo ID.
- * @async
+ * Get a user by ID.
  * @route GET /:id
- * @param {string} id - ID của người dùng cần lấy thông tin.
- * @returns {Object} - Thông tin người dùng dưới dạng JSON.
- * @throws {Error} - Nếu có lỗi xảy ra hoặc người dùng không được tìm thấy.
+ * @param {string} id - User ID.
  */
-router.get('/:id', async (req, res) => {
-  try {
-    const user = await User.findById(req.params.id);
-    if (user) {
-      res.json(user);
-    } else {
-      res.status(404).json({ message: 'User not found' });
-    }
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+router.get('/:id', asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id);
+  if (!user) {
+    return res.status(404).json({ message: 'User not found' });
   }
-});
+  res.json(user);
+}));
 
 /**
- * Tạo một người dùng mới.
- * @async
+ * Create a new user.
  * @route POST /
- * @param {Object} req.body - Dữ liệu người dùng được gửi từ client.
- * @returns {Object} - Người dùng mới được tạo dưới dạng JSON.
- * @throws {Error} - Nếu có lỗi xảy ra trong quá trình lưu dữ liệu.
+ * @param {Object} req.body - User data.
  */
-router.post('/', async (req, res) => {
-  const user = new User({
-    username: req.body.username,
-    password: req.body.password,
-    role: req.body.role,
-  });
-
-  try {
-    const newUser = await user.save();
-    res.status(201).json(newUser);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
-});
+router.post('/', asyncHandler(async (req, res) => {
+  const user = new User(req.body);
+  const newUser = await user.save();
+  res.status(201).json(newUser);
+}));
 
 /**
- * Cập nhật thông tin người dùng theo ID.
- * @async
+ * Update a user by ID.
  * @route PUT /:id
- * @param {string} id - ID của người dùng cần cập nhật.
- * @param {Object} req.body - Dữ liệu cập nhật từ client.
- * @returns {Object} - Thông tin người dùng đã được cập nhật dưới dạng JSON.
- * @throws {Error} - Nếu có lỗi xảy ra hoặc người dùng không được tìm thấy.
+ * @param {string} id - User ID.
+ * @param {Object} req.body - Updated user data.
  */
-router.put('/:id', async (req, res) => {
-  try {
-    const user = await User.findById(req.params.id);
-    if (user) {
-      user.username = req.body.username || user.username;
-      user.password = req.body.password || user.password;
-      user.role = req.body.role || user.role;
-      const updatedUser = await user.save();
-      res.json(updatedUser);
-    } else {
-      res.status(404).json({ message: 'User not found' });
-    }
-  } catch (err) {
-    res.status(400).json({ message: err.message });
+router.put('/:id', asyncHandler(async (req, res) => {
+  const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
+  if (!user) {
+    return res.status(404).json({ message: 'User not found' });
   }
-});
+  res.json(user);
+}));
 
 /**
- * Xóa người dùng theo ID.
- * @async
+ * Delete a user by ID.
  * @route DELETE /:id
- * @param {string} id - ID của người dùng cần xóa.
- * @returns {Object} - Thông báo xóa thành công hoặc lỗi nếu người dùng không được tìm thấy.
- * @throws {Error} - Nếu có lỗi xảy ra trong quá trình xóa người dùng.
+ * @param {string} id - User ID.
  */
-router.delete('/:id', async (req, res) => {
-  try {
-    const deletedUser = await User.findByIdAndDelete(req.params.id);
-    if (!deletedUser) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-    res.json({ message: 'User deleted successfully' });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+router.delete('/:id', asyncHandler(async (req, res) => {
+  const deletedUser = await User.findByIdAndDelete(req.params.id);
+  if (!deletedUser) {
+    return res.status(404).json({ message: 'User not found' });
   }
-});
+  res.json({ message: 'User deleted successfully' });
+}));
 
 module.exports = router;

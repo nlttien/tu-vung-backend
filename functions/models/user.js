@@ -10,7 +10,7 @@ const userSchema = new mongoose.Schema({
   },
   // Mật khẩu người dùng (password)
   password: {
-    type: String, // Kiểu dữ liệu là chuỗi
+    type: String, // Kiểu dữ liệu là chuỗia
     required: true // Trường bắt buộc phải có
   },
   // Vai trò của người dùng (role)

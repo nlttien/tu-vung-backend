@@ -96,8 +96,6 @@ router.post('/refresh-token', async (req, res) => {
  * @returns {Object} - Trả về thông điệp đăng xuất thành công
  */
 router.post('/logout', async (req, res) => {
-  res.set('Access-Control-Allow-Origin', 'http://localhost:3000'); // Cho phép truy cập từ domain cụ thể
-  res.set('Access-Control-Allow-Credentials', 'true'); // Cho phép gửi cookie qua CORS
   const refreshToken = req.cookies.refreshToken;
   if (!refreshToken) return res.sendStatus(401); // Kiểm tra xem token có tồn tại không
 

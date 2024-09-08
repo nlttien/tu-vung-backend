@@ -3,24 +3,17 @@ const { googleAI } = require('@genkit-ai/googleai');
 const { generate } = require('@genkit-ai/ai');
 const { gemini15Flash } = require('@genkit-ai/googleai');
 
-
-// Cấu hình Genkit AI
-// Đặt cấu hình cho Genkit AI, bao gồm tích hợp plugin Google AI với API Key và các thiết lập khác.
+// Configure Genkit AI with Google AI plugin and settings
 configureGenkit({
   plugins: [
-    googleAI({ apiKey: "AIzaSyDefMnSigeOr7isT6GFz1vTtKlbgQw1DLM" }), // Sử dụng Google AI plugin với API Key
-    // googleAI({ apiKey: "AIzaSyDOlcrmpbtzdArD2Iv9-OvyxGm21mV30Rg" }), // Sử dụng Google AI plugin với API Key gemini pro
+    googleAI({ apiKey: "AIzaSyDefMnSigeOr7isT6GFz1vTtKlbgQw1DLM" }), 
   ],
-  logLevel: 'debug', // Đặt mức độ log là 'debug' để theo dõi chi tiết hoạt động
-  enableTracingAndMetrics: true, // Bật tính năng theo dõi và đo lường hiệu suất
+  logLevel: 'debug', 
+  enableTracingAndMetrics: true, 
 });
 
-/**
- * Phân loại từ vựng theo lĩnh vực và đánh giá độ thông dụng
- * @param {string} vocabulary - Từ vựng cần phân loại
- * @returns {Promise<Object>} - Kết quả phân loại và thông tin từ vựng dưới dạng JSON
- */
-const classifyVocabularyByField = async (vocabulary) => {
+// Function to classify vocabulary by field and get information
+const getVocabularyDetails = async (vocabulary) => {
   const prompt = `
   yêu cầu trả về đúng định dạng file json
   Nếu "${vocabulary}" không phải tiếng nhật:
@@ -63,45 +56,34 @@ const classifyVocabularyByField = async (vocabulary) => {
   }
   `;
 
-  // Gọi hàm generate từ Genkit AI với prompt đã tạo
-  const llmResponse = await generate({
-    model: gemini15Flash, // Sử dụng model gemini15Flash từ Google AI
-    prompt: prompt, // Gửi prompt để yêu cầu xử lý từ vựng
-    config: {
-      temperature: 0.3, // Giảm nhiệt độ để có kết quả phân loại chính xác hơn
-    },
-  });
-
-  // Lấy văn bản kết quả từ phản hồi của model
-  let resultText = llmResponse.text();
-
-  // Làm sạch chuỗi JSON nếu nó có chứa các ký tự không mong muốn
-  let cleanedJsonString = resultText.includes('json') ? resultText.replace('```json', '') : resultText;
-  cleanedJsonString = cleanedJsonString.includes('```') ? cleanedJsonString.replace('```', '') : cleanedJsonString.trim();
-
-  // Phân tích chuỗi JSON đã làm sạch thành đối tượng
   try {
-    resultText = JSON.parse(cleanedJsonString.replace(/\n/g, ''));
+    const llmResponse = await generate({
+      model: gemini15Flash, 
+      prompt, 
+      config: {
+        temperature: 0.3, 
+      },
+    });
+
+    let resultText = llmResponse.text();
+    let cleanedJsonString = resultText.includes('json') ? resultText.replace('```json', '') : resultText;
+    cleanedJsonString = cleanedJsonString.includes('```') ? cleanedJsonString.replace('```', '') : cleanedJsonString.trim();
+
+    return JSON.parse(cleanedJsonString.replace(/\n/g, ''));
   } catch (error) {
-    return JSON.parse(`{
+    // Provide a default response if JSON parsing fails
+    return {
       "category": "Công nghệ",
       "color": "#FF5733",
       "popularity": "85",
       "vietnameseMeaning": "Nhìn nhận sự việc một cách khách quan, không bị ảnh hưởng bởi cảm xúc cá nhân.",
       "related_words": ["客観的", "視点"],
       "antonyms": ["主観"],
-    }`);
+    };
   }
-
-  return resultText; // Trả về kết quả cuối cùng
 };
 
-
-/**
- * Tạo các thể khác nhau của từ vựng tiếng Nhật
- * @param {string} vocabulary - Từ vựng cần xử lý
- * @returns {Promise<string>} - Kết quả các thể của từ vựng dưới dạng JSON
- */
+// Function to generate different forms of a Japanese vocabulary
 const generateVocabularyForms = async (vocabulary) => {
   const prompt = `
   Tạo các thể khác nhau của từ vựng tiếng Nhật "${vocabulary}". 
@@ -164,59 +146,50 @@ const generateVocabularyForms = async (vocabulary) => {
   }
   `;
 
-  // Gọi hàm generate từ Genkit AI với prompt đã tạo
-  const llmResponse = await generate({
-    model: gemini15Flash, // Sử dụng model gemini15Flash từ Google AI
-    prompt: prompt, // Gửi prompt để yêu cầu tạo các thể từ vựng
-    config: {
-      temperature: 0.5, // Đảm bảo tính chính xác
-      maxTokens: 150, // Đảm bảo đủ không gian cho các thể của từ vựng
-    },
-  });
-
-  // Lấy kết quả từ phản hồi của model và xóa bỏ các khoảng trắng không cần thiết
-  let resultText = llmResponse.text().trim();
-
-  let cleanedJsonString = resultText.includes('json') ? resultText.replace('```json', '') : resultText;
-  cleanedJsonString = cleanedJsonString.includes('```') ? cleanedJsonString.replace('```', '') : cleanedJsonString.trim();
-
-  // Phân tích chuỗi JSON đã làm sạch thành đối tượng
   try {
-    resultText = JSON.parse(cleanedJsonString.replace(/\n/g, ''));
-  } catch (error) {
-    return resultText;
-  }
+    const llmResponse = await generate({
+      model: gemini15Flash, 
+      prompt, 
+      config: {
+        temperature: 0.5, 
+        maxTokens: 150, 
+      },
+    });
 
-  return resultText; // Trả về kết quả cuối cùng
+    let resultText = llmResponse.text().trim();
+    let cleanedJsonString = resultText.includes('json') ? resultText.replace('```json', '') : resultText;
+    cleanedJsonString = cleanedJsonString.includes('```') ? cleanedJsonString.replace('```', '') : cleanedJsonString.trim();
+
+    return JSON.parse(cleanedJsonString.replace(/\n/g, ''));
+  } catch (error) {
+    // Return the raw text if JSON parsing fails
+    return resultText; 
+  }
 };
 
 const generateOrigin = async (vocabulary) => {
   const prompt = `
-  thực hiện các yêu cầu sau đối với từ vựng tiếng Nhật "${vocabulary}":
-      - Nguồn gốc: Nguồn gốc của từ "${vocabulary}" trong tiếng nhật
-
-  ví dụ: "購入" mang ý nghĩa "mua vào" hoặc "thu được bằng cách mua". Từ này thường được sử dụng trong các ngữ cảnh trang trọng hoặc kinh doanh hơn so với từ "買う" (kau), một từ tiếng Nhật bản địa cũng có nghĩa là "mua".
-  trả lời bằng Tiếng Việt 
+  Bạn hãy cho biết nguồn gốc của từ tiếng Nhật "${vocabulary}".
+  
+  Ví dụ: 
+  Từ "購入" mang ý nghĩa "mua vào" hoặc "thu được bằng cách mua". Từ này thường được sử dụng trong các ngữ cảnh trang trọng hoặc kinh doanh hơn so với từ "買う" (kau), một từ tiếng Nhật bản địa cũng có nghĩa là "mua".
+  
+  Hãy trả lời bằng tiếng Việt.
   `;
 
-  // Gọi hàm generate từ Genkit AI với prompt đã tạo
   const llmResponse = await generate({
-    model: gemini15Flash, // Sử dụng model gemini15Flash từ Google AI
-    prompt: prompt, // Gửi prompt để yêu cầu xử lý từ vựng
+    model: gemini15Flash,
+    prompt,
     config: {
-      temperature: 0.3, // Giảm nhiệt độ để có kết quả phân loại chính xác hơn
+      temperature: 0.3,
     },
   });
 
-  // Lấy văn bản kết quả từ phản hồi của model
-  let resultText = llmResponse.text()
-
-  return resultText; // Trả về kết quả cuối cùng
+  return llmResponse.text();
 };
 
-// Xuất các hàm để sử dụng trong các module khác
 module.exports = {
-  classifyVocabularyByField,
+  getVocabularyDetails,
   generateVocabularyForms,
   generateOrigin,
 };
