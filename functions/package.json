@@ -4,9 +4,9 @@
     "start": "npm run shell",
     "build": "tsc",
     "build:watch": "tsc --watch",
-    "serve": "firebase emulators:start --only functions",
+    "serve": "firebase emulators:start",
     "shell": "firebase functions:shell",
-    "deploy": "firebase deploy --only functions",
+    "deploy": "firebase deploy",
     "logs": "firebase functions:log",
     "docs": "jsdoc -d docs ./"
   },

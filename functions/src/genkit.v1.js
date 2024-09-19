@@ -6,10 +6,10 @@ const { gemini15Flash } = require('@genkit-ai/googleai');
 // Configure Genkit AI with Google AI plugin and settings
 configureGenkit({
   plugins: [
-    googleAI({ apiKey: "AIzaSyDefMnSigeOr7isT6GFz1vTtKlbgQw1DLM" }), 
+    googleAI({ apiKey: "AIzaSyDefMnSigeOr7isT6GFz1vTtKlbgQw1DLM" }),
   ],
-  logLevel: 'debug', 
-  enableTracingAndMetrics: true, 
+  logLevel: 'debug',
+  enableTracingAndMetrics: true,
 });
 
 // Function to classify vocabulary by field and get information
@@ -58,10 +58,10 @@ const getVocabularyDetails = async (vocabulary) => {
 
   try {
     const llmResponse = await generate({
-      model: gemini15Flash, 
-      prompt, 
+      model: gemini15Flash,
+      prompt,
       config: {
-        temperature: 0.3, 
+        temperature: 0.3,
       },
     });
 
@@ -80,90 +80,6 @@ const getVocabularyDetails = async (vocabulary) => {
       "related_words": ["客観的", "視点"],
       "antonyms": ["主観"],
     };
-  }
-};
-
-// Function to generate different forms of a Japanese vocabulary
-const generateVocabularyForms = async (vocabulary) => {
-  const prompt = `
-  Tạo các thể khác nhau của từ vựng tiếng Nhật "${vocabulary}". 
-
-  **Lưu ý:**
-
-  * Một số động từ có cách chia bất quy tắc, hãy đảm bảo cung cấp các thể chính xác cho những trường hợp này.
-  * Nếu có thể, hãy cung cấp thêm thông tin về các thể, ví dụ như mức độ trang trọng của các thể lịch sự khác nhau.
-
-  Bao gồm các thể sau:
-
-  1. Từ điển (辞書)
-  2. Quá khứ (た)
-  3. Phủ định (未然)
-  4. Lịch sự (丁寧)
-  5. te (て)
-  6. Khả năng (可能)
-  7. Thụ động (受身)
-  8. Sai khiến (使役)
-  9. Sai khiến thụ động (使役受身)
-  10. Điều kiện (条件)
-  11. Mệnh lệnh (命令)
-  12. Ý chí (意向)
-  13. Cấm chỉ (禁止)
-
-  Vui lòng trả về các thể của từ vựng trong định dạng JSON sau và không giải thích gì thêm:
-
-  {
-    "dictionary": "từ điển",
-    "past": "quá khứ",
-    "negative": "phủ định",
-    "polite": "lịch sự",
-    "te": "te",
-    "potential": "khả năng",
-    "passive": "thụ động",
-    "causative": "sai khiến",
-    "causative_passive": "sai khiến thụ động",
-    "conditional": "điều kiện",
-    "imperative": "mệnh lệnh",
-    "volitional": "ý chí",
-    "prohibitive": "cấm chỉ"
-  }
-
-  Ví dụ:
-
-  {
-    "dictionary": "勉強する",
-    "past": "勉強した",
-    "negative": "勉強しない",
-    "polite": "勉強します",
-    "te": "勉強して",
-    "potential": "勉強できる",
-    "passive": "勉強される",
-    "causative": "勉強させる",
-    "causative_passive": "勉強させられる",
-    "conditional": "勉強すれば",
-    "imperative": "勉強しろ",
-    "volitional": "勉強したい",
-    "prohibitive": "勉強するな"
-  }
-  `;
-
-  try {
-    const llmResponse = await generate({
-      model: gemini15Flash, 
-      prompt, 
-      config: {
-        temperature: 0.5, 
-        maxTokens: 150, 
-      },
-    });
-
-    let resultText = llmResponse.text().trim();
-    let cleanedJsonString = resultText.includes('json') ? resultText.replace('```json', '') : resultText;
-    cleanedJsonString = cleanedJsonString.includes('```') ? cleanedJsonString.replace('```', '') : cleanedJsonString.trim();
-
-    return JSON.parse(cleanedJsonString.replace(/\n/g, ''));
-  } catch (error) {
-    // Return the raw text if JSON parsing fails
-    return resultText; 
   }
 };
 
@@ -188,8 +104,76 @@ const generateOrigin = async (vocabulary) => {
   return llmResponse.text();
 };
 
+const giaiThichNguPhap = async (vocabulary) => {
+  const prompt = `
+  yêu cầu trả về đúng định dạng file json
+      Nếu "${vocabulary}" không phải ngữ pháp tiếng nhật:
+    
+      {
+        "error": "Vui lòng nhập một cấu trúc ngữ pháp tiếng nhật."
+      }
+    
+      nếu "${vocabulary}" là câu văn thì phân tích ngữ pháp có trong câu văn đó nếu không có ngữ pháp nào tồn tại thì trả về "không có"
+    
+      nếu không phải 2 trường hợp trên thì xử lý những yêu cầu bên dưới
+    
+      thực hiện các yêu cầu sau đối với cấu trúc ngữ pháp tiếng Nhật "${vocabulary}":
+    
+      1. Giải thích cấu trúc ngữ pháp "${vocabulary}" bằng tiếng Việt.
+    
+      2. Đưa ra 10 ví dụ minh họa cho cấu trúc ngữ pháp "${vocabulary}" bằng tiếng Nhật.
+    
+      3. Dịch 10 ví dụ minh họa ở trên sang tiếng Việt.
+      
+      4. Lưu ý khi sử dụng cấu trúc ngữ pháp "${vocabulary}".
+    
+      Vui lòng trả về kết quả theo định dạng JSON sau:
+    
+      {
+        "explanation": "Giải thích cấu trúc ngữ pháp '${vocabulary}'",
+        "examples": [
+          {
+            "japanese": "Ví dụ tiếng Nhật 1",
+            "vietnamese": "Dịch ví dụ 1"
+          },
+          {
+            "japanese": "Ví dụ tiếng Nhật 2",
+            "vietnamese": "Dịch ví dụ 2"
+          }
+        ],
+        "notes": "Lưu ý khi sử dụng"
+      }
+  `;
+
+  try {
+    const llmResponse = await generate({
+      model: gemini15Flash,
+      prompt,
+      config: {
+        temperature: 0.3,
+      },
+    });
+
+    let resultText = llmResponse.text();
+    let cleanedJsonString = resultText.includes('json') ? resultText.replace('```json', '') : resultText;
+    cleanedJsonString = cleanedJsonString.includes('```') ? cleanedJsonString.replace('```', '') : cleanedJsonString.trim();
+
+    return JSON.parse(cleanedJsonString.replace(/\n/g, ''));
+  } catch (error) {
+    // Provide a default response if JSON parsing fails
+    return {
+      "category": "Công nghệ",
+      "color": "#FF5733",
+      "popularity": "85",
+      "vietnameseMeaning": "Nhìn nhận sự việc một cách khách quan, không bị ảnh hưởng bởi cảm xúc cá nhân.",
+      "related_words": ["客観的", "視点"],
+      "antonyms": ["主観"],
+    };
+  }
+};
+
 module.exports = {
   getVocabularyDetails,
-  generateVocabularyForms,
   generateOrigin,
+  giaiThichNguPhap,
 };

@@ -91,11 +91,11 @@ Content-Type: application/json
 }
 
 ### 
-POST https://us-central1-tu-vung-447ad.cloudfunctions.net/tuVungFunction/api/vocabylary/search
+POST http://127.0.0.1:5001/tu-vung-447ad/us-central1/tuVungFunction/api/vocabylary/search/ngu-phap
 Content-Type: application/json
 
 {
-  "subject": "持久力"
+  "subject": "赤ちゃんに泣かれた"
 }
 
 ### 

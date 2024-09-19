@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getVocabularyDetails, generateVocabularyForms, generateOrigin } = require('../src/genkit.v1');
+const { getVocabularyDetails, generateOrigin, giaiThichNguPhap } = require('../src/genkit.v1');
 const axios = require('axios');
 
 const yomikataUrl = "https://convert-tu-vung-a4dyqf7unq-uc.a.run.app";
@@ -18,9 +18,8 @@ router.post('/search', async (req, res) => {
   const { subject } = req.body;
   try {
     // Sử dụng Promise.all để thực hiện các yêu cầu đồng thời
-    const [generated, vocabularyForms, origin, yomikata] = await Promise.all([
+    const [generated,  origin, yomikata] = await Promise.all([
       getVocabularyDetails(subject),
-      generateVocabularyForms(subject),
       generateOrigin(subject),
       axios.post(yomikataUrl, { query: subject }),
     ]);
@@ -36,7 +35,23 @@ router.post('/search', async (req, res) => {
     generated.antonyms = yomikataAntonyms.data;
 
     // Trả về kết quả
-    res.json({ japaneseWord: subject, ...generated, vocabularyForms, ...yomikata.data, origin });
+    res.json({ japaneseWord: subject, ...generated,  ...yomikata.data, origin });
+  } catch (error) {
+    console.error("Error processing request:", error); // Log error for debugging
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.post('/search/ngu-phap', async (req, res) => {
+  const { subject } = req.body;
+  try {
+    // Sử dụng Promise.all để thực hiện các yêu cầu đồng thời
+    const [nguPhap] = await Promise.all([
+      giaiThichNguPhap(subject),
+    ]);
+
+    // Trả về kết quả
+    res.json({ subject, ...nguPhap });
   } catch (error) {
     console.error("Error processing request:", error); // Log error for debugging
     res.status(500).json({ error: error.message });
