@@ -32,6 +32,7 @@ const authMiddleware = (req, res, next) => {
 
     // Nếu token hợp lệ, lưu thông tin giải mã vào req.user và tiếp tục với middleware tiếp theo
     req.user = decoded;
+    
     next();
   });
 };

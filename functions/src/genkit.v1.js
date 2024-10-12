@@ -73,12 +73,7 @@ const getVocabularyDetails = async (vocabulary) => {
   } catch (error) {
     // Provide a default response if JSON parsing fails
     return {
-      "category": "Công nghệ",
-      "color": "#FF5733",
-      "popularity": "85",
-      "vietnameseMeaning": "Nhìn nhận sự việc một cách khách quan, không bị ảnh hưởng bởi cảm xúc cá nhân.",
-      "related_words": ["客観的", "視点"],
-      "antonyms": ["主観"],
+      "error": error.message
     };
   }
 };
@@ -162,12 +157,7 @@ const giaiThichNguPhap = async (vocabulary) => {
   } catch (error) {
     // Provide a default response if JSON parsing fails
     return {
-      "category": "Công nghệ",
-      "color": "#FF5733",
-      "popularity": "85",
-      "vietnameseMeaning": "Nhìn nhận sự việc một cách khách quan, không bị ảnh hưởng bởi cảm xúc cá nhân.",
-      "related_words": ["客観的", "視点"],
-      "antonyms": ["主観"],
+      "error": error.message
     };
   }
 };

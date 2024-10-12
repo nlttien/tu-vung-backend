@@ -2,6 +2,7 @@
 logs
 *.log
 npm-debug.log*
+tu-vung-447ad-firebase-adminsdk-lqtzk-d16ccd9ad3.json*
 yarn-debug.log*
 yarn-error.log*
 firebase-debug.log*

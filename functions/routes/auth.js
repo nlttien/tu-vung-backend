@@ -49,14 +49,14 @@ router.post('/login', async (req, res) => {
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) return res.status(401).send({ message: 'Invalid credentials' });
 
-    const accessToken = jwt.sign({ username: user.username, role: user.role }, SECRET_KEY, { expiresIn: '2d' });
-    const refreshToken = jwt.sign({ username: user.username, role: user.role }, REFRESH_SECRET_KEY, { expiresIn: '7d' });
+    const accessToken = jwt.sign({ id: user._id.toString(), username: user.username, role: user.role }, SECRET_KEY, { expiresIn: '2d' });
+    const refreshToken = jwt.sign({ id: user._id.toString(), username: user.username, role: user.role }, REFRESH_SECRET_KEY, { expiresIn: '7d' });
 
     // Set cookies using the predefined options
     res.cookie('accessToken', accessToken, cookieOptions);
     res.cookie('refreshToken', refreshToken, cookieOptions);
 
-    res.json({ message: 'Logged in successfully', role: user.role });
+    res.json({ message: 'Logged in successfully', role: user.role, id: user.id });
   } catch (error) {
     res.status(500).send({ message: 'Error logging in', error });
   }
@@ -74,7 +74,7 @@ router.post('/refresh-token', async (req, res) => {
   jwt.verify(refreshToken, REFRESH_SECRET_KEY, (err, user) => {
     if (err) return res.sendStatus(403);
 
-    const accessToken = jwt.sign({ username: user.username, role: user.role }, SECRET_KEY, { expiresIn: '2d' });
+    const accessToken = jwt.sign({ id: user.id, username: user.username, role: user.role }, SECRET_KEY, { expiresIn: '2d' });
     res.cookie('accessToken', accessToken, cookieOptions);
     res.json({ message: 'Token refreshed' });
   });
@@ -109,8 +109,8 @@ router.get('/verify-token', require('../middlewares/authMiddleware'), (req, res)
     return res.status(401).json({ message: 'Token has expired or is invalid' });
   }
 
-  const { role } = req.user;
-  res.json({ message: 'Token is valid', role });
+  const { role, id } = req.user;
+  res.json({ message: 'Token is valid', role, id });
 });
 
 module.exports = router;

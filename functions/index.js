@@ -19,8 +19,8 @@ app.use(cookieParser());
 // CORS configuration
 app.use(cors({
   // Allow only specific origin foraaproduction, otherwise allow all
-  // origin: 'https://tu-vung-447ad.web.app',
-  origin:  'http://127.0.0.1:3000',
+  origin: 'https://tu-vung-447ad.web.app',
+  // origin: 'http://127.0.0.1:3000',
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Access-Control-Allow-Headers'],
   credentials: true,
@@ -34,9 +34,9 @@ app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/vocabularies', vocabulariesRoutes);
 app.use('/api/users', usersRoutes);
-app.use('/api/vocabylary', genkitRoute); 
+app.use('/api/vocabylary', genkitRoute);
 
-// Error handling middleware (add this before exporting the app)
+// Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ message: 'Internal server error' });
